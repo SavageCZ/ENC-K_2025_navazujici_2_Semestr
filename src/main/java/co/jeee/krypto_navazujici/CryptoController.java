@@ -1,11 +1,10 @@
 package co.jeee.krypto_navazujici;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import co.jeee.krypto_navazujici.model.CryptoOperation;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -38,5 +37,10 @@ public class CryptoController {
     @PostMapping("/decrypt")
     public Map<String, String> decrypt(@RequestBody Map<String, String> req) throws Exception {
         return Map.of("decrypted", cryptoService.decrypt(req.get("encrypted")));
+    }
+
+    @GetMapping("/history")
+    public List<CryptoOperation> getHistory() {
+        return cryptoService.getHistory();
     }
 }

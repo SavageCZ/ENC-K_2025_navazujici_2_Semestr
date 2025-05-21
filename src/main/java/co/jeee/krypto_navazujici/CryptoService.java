@@ -1,7 +1,10 @@
 package co.jeee.krypto_navazujici;
 
 
+import co.jeee.krypto_navazujici.model.CryptoOperation;
 import org.springframework.lang.NonNull;
+
+import java.util.List;
 
 public interface CryptoService {
 
@@ -15,4 +18,6 @@ public interface CryptoService {
 
     @NonNull
     String decrypt(@NonNull String encrypted) throws Exception;
+
+    List<CryptoOperation> getHistory();
 }
