@@ -1,7 +1,6 @@
 package co.jeee.krypto_navazujici;
 
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,18 +25,18 @@ public class CryptoServiceImpl implements CryptoService {
 
     private final PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 65536, 3);
     private SecretKey aesKey;
-    private byte[] iv;
 
-    @Autowired
-    private CryptoOperationRepository operationRepo;
+    private final CryptoOperationRepository operationRepo;
+
+    public CryptoServiceImpl(CryptoOperationRepository operationRepo) {
+        this.operationRepo = operationRepo;
+    }
 
     @PostConstruct
     public void init() throws Exception {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(128);
         aesKey = keyGen.generateKey();
-        iv = new byte[12];
-        new SecureRandom().nextBytes(iv);
     }
 
     @NonNull
@@ -59,12 +58,18 @@ public class CryptoServiceImpl implements CryptoService {
     @Override
     public String encrypt(@NonNull String text) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+
+        byte[] iv = new byte[12];
+        new SecureRandom().nextBytes(iv);
         GCMParameterSpec spec = new GCMParameterSpec(128, iv);
+
         cipher.init(Cipher.ENCRYPT_MODE, aesKey, spec);
         byte[] encrypted = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
+
         byte[] all = new byte[iv.length + encrypted.length];
         System.arraycopy(iv, 0, all, 0, iv.length);
         System.arraycopy(encrypted, 0, all, iv.length, encrypted.length);
+
         String encoded = Base64.getEncoder().encodeToString(all);
         operationRepo.save(new CryptoOperation("ENCRYPT", text, encoded, java.time.LocalDateTime.now()));
         return encoded;

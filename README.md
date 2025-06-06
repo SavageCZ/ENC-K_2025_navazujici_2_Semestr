@@ -13,7 +13,7 @@ Projekt poskytuje jednoduchou webovou aplikaci pro práci s kryptografickými fu
 
 ## 🧪 Funkce aplikace
 
-Backend používá hashování pomocí algoritmu Argon2 a šifrování pomocí AES-GCM (128-bit klíč).
+Backend používá hashování pomocí algoritmu Argon2id a šifrování pomocí AES-GCM s 128bitovým klíčem. Pro každé šifrování je generován nový náhodný IV, který je součástí výsledného výstupu.
 
 - Hashování zadaného textu
 - Ověření *hashovaného* hesla
@@ -35,4 +35,9 @@ Backend používá hashování pomocí algoritmu Argon2 a šifrování pomocí A
 cd frontend
 npm install
 npm run dev
+```
+
+#### Po spuštění běží na adrese:
+```
+http://localhost:5173
 ```
