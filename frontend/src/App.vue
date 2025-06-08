@@ -39,21 +39,19 @@ const result = ref('')
 const hashToVerify = ref('')
 const history = ref([])
 
-const API = 'http://localhost:8081/api'
-
 const loadHistory = async () => {
-  const res = await axios.get(`${API}/history`)
+  const res = await axios.get('/api/history')
   history.value = res.data
 }
 
 const hash = async () => {
-  const res = await axios.post(`${API}/hash`, { raw: input.value })
+  const res = await axios.post('/api/hash', { raw: input.value })
   result.value = res.data.hash
   await loadHistory()
 }
 
 const verify = async () => {
-  const res = await axios.post(`${API}/verify`, {
+  const res = await axios.post('/api/verify', {
     raw: input.value,
     hash: hashToVerify.value
   })
@@ -62,13 +60,13 @@ const verify = async () => {
 }
 
 const encrypt = async () => {
-  const res = await axios.post(`${API}/encrypt`, { text: input.value })
+  const res = await axios.post('/api/encrypt', { text: input.value })
   result.value = res.data.encrypted
   await loadHistory()
 }
 
 const decrypt = async () => {
-  const res = await axios.post(`${API}/decrypt`, { encrypted: input.value })
+  const res = await axios.post('/api/decrypt', { encrypted: input.value })
   result.value = res.data.decrypted
   await loadHistory()
 }
