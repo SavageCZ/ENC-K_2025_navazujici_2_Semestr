@@ -2,7 +2,7 @@
 FROM node:20-alpine AS frontend
 WORKDIR /frontend
 COPY frontend/ .
-RUN npm install && npm run build
+RUN npm install && npm run dev
 
 # 2. Build Spring WAR with frontend included
 FROM gradle:8.5-jdk17 AS build
