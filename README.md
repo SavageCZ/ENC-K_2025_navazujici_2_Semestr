@@ -23,13 +23,32 @@ Backend používá hashování pomocí algoritmu Argon2id a šifrování pomocí
 
 ## 🚀 Spuštění projektu
 
-### Backend (Spring Boot)
+### 🐳 Nasazení přes Docker (produkční režim)
+
+Aplikaci lze spustit jako celek (backend + zabalený frontend) pomocí Dockeru:
+
+```bash
+docker build -t krypto-app .
+docker run -p 8080:8080 krypto-app
+```
+
+Po spuštění bude dostupná na:
+
+```
+http://localhost:8080
+```
+
+---
+
+### 🧪 Lokální vývoj
+
+#### Backend (Spring Boot)
 
 ```bash
 ./gradlew bootRun
 ```
 
-### Frontend (Vue 3 + Vite)
+#### Frontend (Vue 3 + Vite)
 
 ```bash
 cd frontend
@@ -37,7 +56,8 @@ npm install
 npm run dev
 ```
 
-#### Po spuštění běží na adrese:
+Frontend poběží samostatně na:
+
 ```
 http://localhost:5173
 ```
