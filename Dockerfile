@@ -1,8 +1,8 @@
+FROM gradle:8.5-jdk17 AS build
+COPY --chown=gradle:gradle . /app
+WORKDIR /app
+RUN gradle clean war
+
 FROM tomcat:9.0-jdk17
-LABEL maintainer="jan.divis"
-
-RUN rm -rf /usr/local/tomcat/webapps/*
-
-COPY build/libs/Krypto_navazujici-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
-
+COPY --from=build /app/build/libs/*.war /usr/local/tomcat/webapps/ROOT.war
 EXPOSE 8080
