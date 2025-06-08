@@ -43,10 +43,18 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 }
 
-tasks.register('copyFrontend', Copy) {
-    from("frontend/dist")
-    into("src/main/resources/static")
+tasks.register('buildFrontend', Exec) {
+    workingDir 'frontend'
+    commandLine 'npm', 'run', 'build'
 }
+
+tasks.register('copyFrontend', Copy) {
+    from 'frontend/dist'
+    into 'src/main/resources/static'
+}
+
+processResources.dependsOn(copyFrontend)
+copyFrontend.dependsOn(buildFrontend)
 
 tasks.named('processResources') {
     dependsOn(tasks.named('copyFrontend'))
