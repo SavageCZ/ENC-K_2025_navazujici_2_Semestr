@@ -11,7 +11,7 @@ Projekt se skládá ze dvou částí:
 - **Backend (Java + Spring Boot)** – poskytuje REST API pro kryptografické operace (hashování, ověřování, šifrování, dešifrování, historie)
 - **Frontend (Vue 3 + Vite)** – jednoduché uživatelské rozhraní pro zadávání a zobrazování výsledků
 
-Frontend a backend spolu komunikují pomocí HTTP, Vue frontend běží typicky samostatně (`npm run dev`) a posílá požadavky na `/api/*`.
+Frontend a backend spolu komunikují pomocí HTTP. Vue frontend může běžet samostatně (`npm run dev`) nebo být zabalen a nasazen společně s backendem jako součást Spring Boot JAR (pomocí Dockeru). Posílá požadavky na `/api/*`.
 
 ---
 
@@ -55,7 +55,7 @@ Hlavní komponenta: `App.vue`
 Obsahuje vstupní pole a tlačítka pro spuštění jednotlivých operací (hash, verify, encrypt, decrypt).  
 Komunikace s backendem probíhá pomocí `axios` (verze 1.9.0) volání na `/api/*`.
 
-Konfigurace pomocí Vite (`vite.config.js`) – žádné přesměrování, běží samostatně na `localhost:5173`.
+Konfigurace pomocí Vite (`vite.config.js`) – vývojový server běží samostatně na `localhost:5173`. Pro produkční režim se frontend sestaví (`npm run build`) a výstup se kopíruje do `src/main/webapp/` pro zahrnutí do výsledného JAR.
 
 ---
 
@@ -99,3 +99,23 @@ Kromě ručního testování je součástí projektu i testovací třída `Crypt
 - Podpora ukládání uživatelů a login flow
 - Předvyplněné příklady pro frontend
 - Přehlednější zobrazení historie
+
+---
+
+## 🐳 Nasazení s Dockerem
+
+Projekt je možné sestavit a spustit pomocí Dockeru jako samostatnou aplikaci (frontend + backend v jednom).
+
+### Build a spuštění:
+
+```bash
+docker build -t krypto-app .
+docker run -p 8080:8080 krypto-app
+```
+
+Výsledná aplikace je dostupná na `http://localhost:8080` a všechny API volání fungují přes `/api/*`.
+
+Dockerfile využívá třífázový build:
+1. Sestavení frontendu pomocí Node + Vite
+2. Build Spring Boot JAR (`app.jar`)
+3. Spuštění JAR pomocí `openjdk:17` bez potřeby externího Tomcatu

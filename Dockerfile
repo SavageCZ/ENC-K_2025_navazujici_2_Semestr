@@ -10,9 +10,10 @@ FROM gradle:8.5-jdk17 AS builder
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
 COPY --from=frontend /app/dist/ /app/src/main/webapp/
-RUN ./gradlew clean build -x test
+RUN chmod +x gradlew && ./gradlew clean build -x test
 
-# Final image with Tomcat
-FROM tomcat:9.0-jdk17
-COPY --from=builder /app/build/libs/*.war /usr/local/tomcat/webapps/ROOT.war
+# Final image running Spring Boot JAR directly
+FROM openjdk:17
+COPY --from=builder /app/build/libs/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
 EXPOSE 8080
