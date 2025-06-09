@@ -14,6 +14,7 @@ RUN chmod +x gradlew && ./gradlew clean build -x test
 # Stage 3: Run the Spring Boot app
 FROM openjdk:17-jdk-slim
 WORKDIR /app
+ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 COPY --from=builder /app/build/libs/app.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

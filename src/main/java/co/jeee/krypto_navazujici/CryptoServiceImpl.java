@@ -23,7 +23,7 @@ import co.jeee.krypto_navazujici.model.CryptoOperation;
 @Service
 public class CryptoServiceImpl implements CryptoService {
 
-    private final PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 65536, 3);
+    private final PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 8192, 2);
     private SecretKey aesKey;
 
     private final CryptoOperationRepository operationRepo;
