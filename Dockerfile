@@ -8,6 +8,7 @@ RUN npm install && npm run build
 FROM gradle:8.5-jdk17 AS builder
 WORKDIR /app
 COPY --chown=gradle:gradle . .
+RUN mkdir -p src/main/webapp/
 COPY --from=frontend /app/dist/ /app/src/main/webapp/
 RUN chmod +x gradlew && ./gradlew clean build -x test
 
