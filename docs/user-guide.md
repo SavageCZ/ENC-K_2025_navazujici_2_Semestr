@@ -1,5 +1,3 @@
-
-
 # 👤 Uživatelská dokumentace
 
 Tato aplikace umožňuje provádět kryptografické operace přes jednoduché webové rozhraní – konkrétně:
@@ -45,6 +43,10 @@ Po otevření webové aplikace se zobrazí jedno vstupní pole a 3 akční tlač
    - `Dešifruj` – dešifruje předtím zašifrovaný výstup (ve správném formátu)
 
 3. **Zobrazí se výsledek** – buď zakódovaný hash, šifrovaný text, nebo výstup dešifrování
+
+4. **V případě ověřování hashe**
+   - Pokud vstupní text odpovídá zadanému hashi, zobrazí se potvrzení `✅ HESLO SEDÍ`
+   - Jinak aplikace hlásí, že heslo neodpovídá
 
 ---
 
