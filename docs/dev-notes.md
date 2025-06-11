@@ -63,7 +63,13 @@ Konfigurace pomocí Vite (`vite.config.js`) – vývojový server běží samost
 
 - **Argon2id** – doporučený algoritmus pro ukládání hesel, odolný proti GPU útokům
   - Salt je generována automaticky
-  - Parametry: 65536kB memory, 3 iterace, 1 vlákno
+  - Výstupní formát:
+    ```
+    $argon2id$v=19$m=8192,t=2,p=1$salt$hash
+    ```
+    - `m=8192` – využití 8 MB paměti  
+    - `t=2` – počet iterací (průchodů)  
+    - `p=1` – paralelismus (počet vláken)
 - **AES-GCM (128bit)** – moderní symetrická šifra s autentizací
   - IV = 12 bajtů, generován náhodně při každé šifře
   - IV je uložen v Base64 výstupu spolu se šifrovaným obsahem
