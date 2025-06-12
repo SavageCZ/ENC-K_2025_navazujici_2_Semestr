@@ -38,7 +38,17 @@ public class CryptoController {
     public Map<String, String> encrypt(@RequestBody Map<String, String> req) throws Exception {
         String text = req.get("text");
         String key = req.get("key");
-        String encrypted = cryptoService.encrypt(text, key.getBytes());
+        if (text == null || key == null) {
+            throw new IllegalArgumentException("Text nebo klíč nesmí být null.");
+        }
+        byte[] textBytes = text.getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+
+        if (textBytes.length != 16 || keyBytes.length != 16) {
+            throw new IllegalArgumentException("AES podporuje pouze 16-bajtový vstup a klíč.");
+        }
+
+        String encrypted = cryptoService.encrypt(text, keyBytes);
         return Map.of("encrypted", encrypted);
     }
 
@@ -46,7 +56,16 @@ public class CryptoController {
     public Map<String, String> decrypt(@RequestBody Map<String, String> req) throws Exception {
         String encryptedHex = req.get("encrypted");
         String key = req.get("key");
-        String decrypted = cryptoService.decrypt(encryptedHex, key.getBytes());
+        if (encryptedHex == null || key == null) {
+            throw new IllegalArgumentException("Ciphertext nebo klíč nesmí být null.");
+        }
+
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length != 16) {
+            throw new IllegalArgumentException("AES vyžaduje 16-bajtový klíč.");
+        }
+
+        String decrypted = cryptoService.decrypt(encryptedHex, keyBytes);
         return Map.of("decrypted", decrypted);
     }
 

@@ -77,12 +77,17 @@ const verify = async () => {
 const encrypt = async () => {
   const res = await axios.post('/api/encrypt', { text: plaintext.value, key: key.value })
   result.value = res.data.encrypted
+  ciphertext.value = res.data.encrypted
   await loadHistory()
 }
 
 const decrypt = async () => {
-  const res = await axios.post('/api/decrypt', { encrypted: ciphertext.value, key: key.value })
+  const res = await axios.post('/api/decrypt', {
+    encrypted: ciphertext.value,
+    key: key.value
+  })
   result.value = res.data.decrypted
+  plaintext.value = res.data.decrypted
   await loadHistory()
 }
 </script>
