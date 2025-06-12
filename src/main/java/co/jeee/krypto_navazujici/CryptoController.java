@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -35,12 +36,18 @@ public class CryptoController {
 
     @PostMapping("/encrypt")
     public Map<String, String> encrypt(@RequestBody Map<String, String> req) throws Exception {
-        return Map.of("encrypted", cryptoService.encrypt(req.get("text")));
+        String text = req.get("text");
+        String key = req.get("key");
+        String encrypted = cryptoService.encrypt(text, key.getBytes());
+        return Map.of("encrypted", encrypted);
     }
 
     @PostMapping("/decrypt")
     public Map<String, String> decrypt(@RequestBody Map<String, String> req) throws Exception {
-        return Map.of("decrypted", cryptoService.decrypt(req.get("encrypted")));
+        String encryptedHex = req.get("encrypted");
+        String key = req.get("key");
+        String decrypted = cryptoService.decrypt(encryptedHex, key.getBytes());
+        return Map.of("decrypted", decrypted);
     }
 
     @GetMapping("/history")

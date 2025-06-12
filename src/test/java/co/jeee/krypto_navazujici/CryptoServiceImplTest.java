@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -28,13 +30,20 @@ class CryptoServiceImplTest {
 
     @Test
     void encryptAndDecrypt_shouldWorkCorrectly() throws Exception {
-        String text = "tajná zpráva";
+        String text = "tajnyzpravatest1"; // přesně 16 znaků
+        String keyStr = "1234567890abcdef";
+        byte[] key = keyStr.getBytes(StandardCharsets.UTF_8);
 
-        String encrypted = cryptoService.encrypt(text);
-        assertNotNull(encrypted);
-        assertNotEquals(text, encrypted);
+        assertEquals(16, key.length, "Klíč musí být 16 bajtů dlouhý pro AES");
 
-        String decrypted = cryptoService.decrypt(encrypted);
-        assertEquals(text, decrypted);
+        byte[] inputBytes = text.getBytes(StandardCharsets.UTF_8);
+        assertEquals(16, inputBytes.length, "Vstupní text musí být přesně 16 bajtů pro AES");
+
+        String encrypted = cryptoService.encrypt(text, key);
+        assertNotNull(encrypted, "Výsledek šifrování nesmí být null");
+        assertNotEquals(text, encrypted, "Zašifrovaný text nesmí být shodný s původním");
+
+        String decrypted = cryptoService.decrypt(encrypted, key);
+        assertEquals(text, decrypted, "Dešifrovaný text musí odpovídat původnímu");
     }
 }

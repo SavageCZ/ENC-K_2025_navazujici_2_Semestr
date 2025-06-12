@@ -1,18 +1,13 @@
 package co.jeee.krypto_navazujici;
 
-import jakarta.annotation.PostConstruct;
+import co.jeee.krypto_navazujici.aes.AESService;
+import co.jeee.krypto_navazujici.aes.AESUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -24,19 +19,13 @@ import co.jeee.krypto_navazujici.model.CryptoOperation;
 public class CryptoServiceImpl implements CryptoService {
 
     private final PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 8192, 2);
-    private SecretKey aesKey;
 
     private final CryptoOperationRepository operationRepo;
+    private final AESService aesService;
 
-    public CryptoServiceImpl(CryptoOperationRepository operationRepo) {
+    public CryptoServiceImpl(CryptoOperationRepository operationRepo, AESService aesService) {
         this.operationRepo = operationRepo;
-    }
-
-    @PostConstruct
-    public void init() throws Exception {
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(128);
-        aesKey = keyGen.generateKey();
+        this.aesService = aesService;
     }
 
     @NonNull
@@ -56,38 +45,19 @@ public class CryptoServiceImpl implements CryptoService {
 
     @NonNull
     @Override
-    public String encrypt(@NonNull String text) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-
-        byte[] iv = new byte[12];
-        new SecureRandom().nextBytes(iv);
-        GCMParameterSpec spec = new GCMParameterSpec(128, iv);
-
-        cipher.init(Cipher.ENCRYPT_MODE, aesKey, spec);
-        byte[] encrypted = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
-
-        byte[] all = new byte[iv.length + encrypted.length];
-        System.arraycopy(iv, 0, all, 0, iv.length);
-        System.arraycopy(encrypted, 0, all, iv.length, encrypted.length);
-
-        String encoded = Base64.getEncoder().encodeToString(all);
-        operationRepo.save(new CryptoOperation("ENCRYPT", text, encoded, java.time.LocalDateTime.now()));
-        return encoded;
+    public String encrypt(@NonNull String text, @NonNull byte[] key) throws Exception {
+        byte[] inputBytes = text.getBytes(StandardCharsets.UTF_8);
+        byte[] encrypted = aesService.encrypt(inputBytes, key);
+        String hex = AESUtils.toHex(encrypted);
+        operationRepo.save(new CryptoOperation("ENCRYPT", text, hex, java.time.LocalDateTime.now()));
+        return hex;
     }
 
     @NonNull
     @Override
-    public String decrypt(@NonNull String encrypted) throws Exception {
-        byte[] all = Base64.getDecoder().decode(encrypted);
-        byte[] localIv = new byte[12];
-        byte[] cipherText = new byte[all.length - 12];
-        System.arraycopy(all, 0, localIv, 0, 12);
-        System.arraycopy(all, 12, cipherText, 0, cipherText.length);
-
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec spec = new GCMParameterSpec(128, localIv);
-        cipher.init(Cipher.DECRYPT_MODE, aesKey, spec);
-        byte[] decrypted = cipher.doFinal(cipherText);
+    public String decrypt(@NonNull String encrypted, @NonNull byte[] key) throws Exception {
+        byte[] decoded = AESUtils.fromHex(encrypted);
+        byte[] decrypted = aesService.decrypt(decoded, key);
         String decryptedText = new String(decrypted, StandardCharsets.UTF_8);
         operationRepo.save(new CryptoOperation("DECRYPT", encrypted, decryptedText, java.time.LocalDateTime.now()));
         return decryptedText;

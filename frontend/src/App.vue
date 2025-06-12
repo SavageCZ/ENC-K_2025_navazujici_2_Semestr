@@ -5,6 +5,17 @@
 
       <input v-model="input" placeholder="Zadej text" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem" />
 
+      <div style="margin-bottom: 1rem">
+        <label for="plaintext">Plaintext:</label>
+        <textarea id="plaintext" v-model="plaintext" placeholder="Zadej text k zašifrování" style="width: 100%; padding: 0.5rem;"></textarea>
+
+        <label for="ciphertext" style="margin-top: 1rem; display: block;">Ciphertext:</label>
+        <textarea id="ciphertext" v-model="ciphertext" placeholder="Zadej zašifrovaný text" style="width: 100%; padding: 0.5rem;"></textarea>
+
+        <label for="key" style="margin-top: 1rem; display: block;">Klíč:</label>
+        <input id="key" v-model="key" placeholder="Zadej klíč (např. 16 znaků)" style="width: 100%; padding: 0.5rem;" />
+      </div>
+
       <div style="display: flex; gap: 1rem; flex-wrap: wrap">
         <button @click="hash">Hashuj</button>
         <button @click="verify">Ověř</button>
@@ -39,6 +50,10 @@ const result = ref('')
 const hashToVerify = ref('')
 const history = ref([])
 
+const plaintext = ref('')
+const ciphertext = ref('')
+const key = ref('')
+
 const loadHistory = async () => {
   const res = await axios.get('/api/history')
   history.value = res.data
@@ -60,13 +75,13 @@ const verify = async () => {
 }
 
 const encrypt = async () => {
-  const res = await axios.post('/api/encrypt', { text: input.value })
+  const res = await axios.post('/api/encrypt', { text: plaintext.value, key: key.value })
   result.value = res.data.encrypted
   await loadHistory()
 }
 
 const decrypt = async () => {
-  const res = await axios.post('/api/decrypt', { encrypted: input.value })
+  const res = await axios.post('/api/decrypt', { encrypted: ciphertext.value, key: key.value })
   result.value = res.data.decrypted
   await loadHistory()
 }
