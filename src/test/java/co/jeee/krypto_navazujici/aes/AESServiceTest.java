@@ -44,7 +44,7 @@ class AESServiceTest {
     @Test
     void decrypt_shouldReturnOriginalInput_whenEncryptedAndDecrypted() {
         byte[] input = "tajnyzpravatest1".getBytes(); // 16 bytes
-        byte[] key = "1234567890abcdef".getBytes(); // 16 bytes
+        byte[] key = "1234567890abcdeg".getBytes(); // 16 bytes
 
         byte[] encrypted = aesService.encrypt(input, key);
         byte[] decrypted = aesService.decrypt(encrypted, key);
