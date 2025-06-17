@@ -29,7 +29,6 @@ coverage/
 
 # Frontend build & deps
 frontend/node_modules/
-frontend/dist/
 
 # Docker artifacts
 *.jar
