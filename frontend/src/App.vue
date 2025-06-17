@@ -83,7 +83,7 @@ const encrypt = async () => {
 
 const decrypt = async () => {
   const res = await axios.post('/api/decrypt', {
-    encrypted: ciphertext.value,
+    ciphertext: ciphertext.value,
     key: key.value
   })
   result.value = res.data.decrypted

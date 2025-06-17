@@ -10,7 +10,7 @@ WORKDIR /app
 COPY --chown=gradle:gradle . .
 RUN mkdir -p src/main/webapp/
 COPY --from=frontend /app/dist/ /app/src/main/webapp/
-RUN chmod +x gradlew && ./gradlew clean build -x test
+RUN gradle clean build -x test
 
 # Stage 3: Run the Spring Boot app
 FROM openjdk:17-jdk-slim

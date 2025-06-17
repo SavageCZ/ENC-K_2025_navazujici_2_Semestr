@@ -54,10 +54,16 @@ public class CryptoController {
 
     @PostMapping("/decrypt")
     public Map<String, String> decrypt(@RequestBody Map<String, String> req) throws Exception {
-        String encryptedHex = req.get("encrypted");
+        System.out.println("Přijaté klíče v requestu: " + req.keySet());
+        if (!req.containsKey("ciphertext") || !req.containsKey("key")) {
+            throw new IllegalArgumentException("Tělo požadavku musí obsahovat 'ciphertext' a 'key'.");
+        }
+
+        String encryptedHex = req.get("ciphertext");
         String key = req.get("key");
-        if (encryptedHex == null || key == null) {
-            throw new IllegalArgumentException("Ciphertext nebo klíč nesmí být null.");
+
+        if (encryptedHex == null || encryptedHex.trim().isEmpty() || key == null || key.trim().isEmpty()) {
+            throw new IllegalArgumentException("Ciphertext nebo klíč nesmí být null nebo prázdný.");
         }
 
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
