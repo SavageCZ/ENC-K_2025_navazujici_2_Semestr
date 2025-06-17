@@ -44,6 +44,9 @@ dependencies {
 bootJar {
     enabled = true
     archiveFileName = "app.jar"
+    from("src/main/webapp") {
+        into("static")
+    }
 }
 
 tasks.named('test') {
