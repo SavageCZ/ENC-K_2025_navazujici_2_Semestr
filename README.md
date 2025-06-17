@@ -60,4 +60,15 @@ Frontend poběží samostatně na:
 
 ```
 http://localhost:5173
+
+---
+
+## 🔐 Poznámky k šifrování (AES-GCM)
+
+- **Délka vstupu:** Pro AES-GCM je potřeba, aby vstupní text (plaintext) i klíč měly délku **přesně 16 znaků**.
+- **Šifrování:** Před šifrováním je nutné zadat čistý text a 16znakový klíč. Při odeslání se automaticky vygeneruje IV a výsledkem je `ciphertext`, který obsahuje IV i data.
+- **Dešifrování:**
+  - Nejprve je třeba odstranit předchozí výstup z pole „text“.
+  - Do pole se vloží `ciphertext` získaný ze šifrování.
+  - Po zadání stejného klíče (16 znaků) lze kliknutím na **Dešifrovat** získat zpět původní plaintext.
 ```

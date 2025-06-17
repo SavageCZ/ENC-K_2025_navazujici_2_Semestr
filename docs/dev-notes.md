@@ -125,3 +125,26 @@ Dockerfile využívá třífázový build:
 1. Sestavení frontendu pomocí Node + Vite
 2. Build Spring Boot JAR (`app.jar`)
 3. Spuštění JAR pomocí `openjdk:17` bez potřeby externího Tomcatu
+
+---
+
+## ✅ Finální spojení frontendu a backendu
+
+Frontend (Vite + Vue) je nyní úspěšně zabalen a nasazen jako součást backendu pomocí Dockeru. Byly provedeny následující kroky pro funkční propojení:
+
+- Do `vite.config.js` přidán `base: './'` pro relativní cesty.
+- Výstupní složka `dist/` z frontendu je v Dockerfile kopírována do `src/main/webapp/`.
+- Pomocí konfigurace v `build.gradle` je obsah `webapp` zahrnut do výsledného JAR:
+  ```groovy
+  bootJar {
+      enabled = true
+      archiveFileName = "app.jar"
+      from("src/main/webapp") {
+          into("static")
+      }
+  }
+  ```
+- Spring Boot automaticky servíruje frontend z cesty `/`.
+- Testováno úspěšně lokálně i na Railway – vše funguje.
+
+🎉 Aplikace je nyní plně funkční jako monolitický Docker kontejner bez potřeby proxy nebo odděleného frontend serveru.
