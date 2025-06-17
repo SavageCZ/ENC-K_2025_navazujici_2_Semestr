@@ -46,16 +46,6 @@ bootJar {
     archiveFileName = "app.jar"
 }
 
-
-tasks.register('copyFrontend', Copy) {
-    from "frontend/dist"
-    into "src/main/webapp"
-}
-
-tasks.named('processResources') {
-    dependsOn(tasks.named('copyFrontend'))
-}
-
 tasks.named('test') {
     useJUnitPlatform()
 }
